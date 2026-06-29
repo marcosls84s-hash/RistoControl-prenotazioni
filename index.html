@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prenotazione Tavolo | Risto Control</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+</head>
+<body class="bg-gray-100 font-sans min-h-screen flex items-center justify-center p-4">
+
+    <div id="app" class="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden hidden">
+        <!-- Header -->
+        <div class="bg-orange-500 p-6 text-white text-center">
+            <h1 id="restaurantName" class="text-2xl font-bold uppercase tracking-wide">RISTOCONTROL</h1>
+            <p class="text-orange-100 text-sm mt-1">Modulo di Prenotazione Online</p>
+        </div>
+
+        <!-- Form -->
+        <form id="reservationForm" class="p-6 space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Nome Prenotazione</label>
+                <input type="text" id="name" required class="w-full border-gray-300 border p-3 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="Esempio: Mario Rossi">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Adulti</label>
+                    <input type="number" id="adults" min="1" value="2" required class="w-full border-gray-300 border p-3 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Bambini</label>
+                    <input type="number" id="children" min="0" value="0" class="w-full border-gray-300 border p-3 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Data</label>
+                <input type="date" id="date" required class="w-full border-gray-300 border p-3 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Fascia Oraria</label>
+                <select id="slot" class="w-full border-gray-300 border p-3 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none">
+                    <option value="Cena">Cena</option>
+                    <option value="Pranzo">Pranzo</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-gray-500 mb-1 uppercase">Telefono</label>
+                <input type="tel" id="phone" required class="w-full border-gray-300 border p-3 rounded-lg focus:ring-2 focus:ring-orange-500 outline-none" placeholder="333 0000000">
+            </div>
+
+            <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 rounded-xl transition duration-300 shadow-lg uppercase tracking-wider">
+                Conferma Prenotazione
+            </button>
+        </form>
+
+        <div id="successMsg" class="hidden p-10 text-center space-y-4">
+            <div class="text-6xl">✅</div>
+            <h2 class="text-2xl font-bold text-gray-800">Prenotazione Inviata!</h2>
+            <p class="text-gray-600">Il ristorante ha ricevuto la tua richiesta. Ti contatteremo in caso di problemi.</p>
+            <button onclick="location.reload()" class="text-orange-500 font-bold underline">Fai un'altra prenotazione</button>
+        </div>
+    </div>
+
+    <!-- Error State -->
+    <div id="errorState" class="hidden text-center p-10">
+        <h2 class="text-xl font-bold text-red-600">ID Ristorante Non Valido</h2>
+        <p class="text-gray-500">Impossibile caricare il modulo di prenotazione.</p>
+    </div>
+
+    <script>
+        // CONFIGURAZIONE FIREBASE (Usa la stessa dell'app)
+        const firebaseConfig = {
+            databaseURL: "https://comandaristorante-facile-default-rtdb.europe-west1.firebasedatabase.app"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // 1. Leggi ID Ristorante dal link (?id=res_xxxx)
+        const urlParams = new URLSearchParams(window.location.search);
+        const restaurantId = urlParams.get('id');
+
+        if (!restaurantId) {
+            document.getElementById('errorState').classList.remove('hidden');
+        } else {
+            document.getElementById('app').classList.remove('hidden');
+            
+            // Carica nome ristorante
+            database.ref('restaurants/' + restaurantId + '/info/name').once('value').then((snap) => {
+                if(snap.exists()) document.getElementById('restaurantName').innerText = snap.val();
+            });
+
+            // Imposta data minima (oggi)
+            document.getElementById('date').min = new Date().toISOString().split("T")[0];
+
+            // 2. Gestione INVIO
+            document.getElementById('reservationForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const newRes = {
+                    name: document.getElementById('name').value,
+                    adults: parseInt(document.getElementById('adults').value),
+                    children: parseInt(document.getElementById('children').value),
+                    date: document.getElementById('date').value,
+                    slot: document.getElementById('slot').value,
+                    phone: document.getElementById('phone').value,
+                    assignedTable: 0,
+                    assignedTime: ""
+                };
+
+                // Salva nel nodo corretto del ristorante
+                database.ref('restaurants/' + restaurantId + '/reservations').push(newRes).then(() => {
+                    document.getElementById('reservationForm').classList.add('hidden');
+                    document.getElementById('successMsg').classList.remove('hidden');
+                }).catch(err => alert("Errore: " + err.message));
+            });
+        }
+    </script>
+</body>
+</html>
