@@ -10,109 +10,77 @@
 </head>
 <body class="bg-gray-50 font-sans min-h-screen p-4 flex flex-col items-center">
 
-    <!-- Schermata Principale -->
     <div id="mainView" class="max-w-md w-full bg-white rounded-3xl shadow-2xl overflow-hidden hidden">
         <div class="bg-orange-500 p-8 text-white text-center">
             <h1 id="restaurantName" class="text-2xl font-bold uppercase tracking-widest">RISTOCONTROL</h1>
-            <p class="text-orange-100 text-sm mt-1">Prenota il tuo tavolo in pochi secondi</p>
+            <p class="text-orange-100 text-sm mt-1">Prenota il tuo tavolo</p>
         </div>
 
-        <!-- Form Nuova Prenotazione -->
         <form id="reservationForm" class="p-6 space-y-4">
-            <input type="text" id="name" required class="w-full border-gray-200 border-2 p-4 rounded-xl focus:border-orange-500 outline-none transition-all" placeholder="Nome Prenotazione">
+            <input type="text" id="name" required class="w-full border-gray-200 border-2 p-4 rounded-xl focus:border-orange-500 outline-none" placeholder="Nome Prenotazione">
             
             <div class="grid grid-cols-2 gap-4">
-                <div class="relative">
-                    <label class="text-[10px] font-bold text-gray-400 absolute top-2 left-4 uppercase">Adulti</label>
-                    <input type="number" id="adults" min="1" value="2" class="w-full border-gray-200 border-2 p-4 pt-6 rounded-xl outline-none focus:border-orange-500">
-                </div>
-                <div class="relative">
-                    <label class="text-[10px] font-bold text-gray-400 absolute top-2 left-4 uppercase">Bambini</label>
-                    <input type="number" id="children" min="0" value="0" class="w-full border-gray-200 border-2 p-4 pt-6 rounded-xl outline-none focus:border-orange-500">
-                </div>
+                <input type="number" id="adults" min="1" value="2" class="w-full border-gray-200 border-2 p-4 rounded-xl outline-none focus:border-orange-500" placeholder="Adulti">
+                <input type="number" id="children" min="0" value="0" class="w-full border-gray-200 border-2 p-4 rounded-xl outline-none focus:border-orange-500" placeholder="Bambini">
             </div>
 
             <div class="grid grid-cols-2 gap-4">
                 <input type="date" id="date" required class="w-full border-gray-200 border-2 p-4 rounded-xl outline-none focus:border-orange-500">
-                <select id="slot" class="w-full border-gray-200 border-2 p-4 rounded-xl outline-none focus:border-orange-500">
+                <select id="slot" class="w-full border-gray-200 border-2 p-4 rounded-xl outline-none">
                     <option value="Cena">Cena</option>
                     <option value="Pranzo">Pranzo</option>
                 </select>
             </div>
 
-            <input type="tel" id="phone" required class="w-full border-gray-200 border-2 p-4 rounded-xl outline-none focus:border-orange-500" placeholder="Cellulare (per conferme)">
-            
-            <textarea id="notes" rows="2" class="w-full border-gray-200 border-2 p-4 rounded-xl outline-none focus:border-orange-500" placeholder="Note (es. 1 celiaco, seggiolone, allergie...)"></textarea>
+            <input type="tel" id="phone" required class="w-full border-gray-200 border-2 p-4 rounded-xl outline-none focus:border-orange-500" placeholder="Cellulare">
+            <textarea id="notes" rows="2" class="w-full border-gray-200 border-2 p-4 rounded-xl outline-none focus:border-orange-500" placeholder="Note (es. celiaci, allergie...)"></textarea>
 
-            <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-black py-5 rounded-2xl transition duration-300 shadow-lg uppercase text-lg">
-                Conferma Prenotazione
-            </button>
-
-            <div class="text-center pt-4">
-                <button type="button" onclick="showLogin()" class="text-orange-500 font-bold text-sm underline uppercase tracking-tight">Gestisci la tua prenotazione esistente</button>
-            </div>
+            <button type="submit" id="btnSubmit" class="w-full bg-orange-500 text-white font-black py-5 rounded-2xl uppercase shadow-lg">Conferma Prenotazione</button>
+            <div class="text-center pt-2"><button type="button" onclick="showLogin()" class="text-orange-500 font-bold text-sm underline uppercase">Gestisci prenotazione esistente</button></div>
         </form>
     </div>
 
-    <!-- Modale Successo Gigante -->
-    <div id="successModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-6 z-50">
-        <div class="bg-white rounded-[40px] p-10 w-full max-w-sm text-center shadow-2xl scale-up-animation">
-            <div class="text-7xl mb-6">🎉</div>
-            <h2 class="text-3xl font-black text-gray-900 leading-tight">PRENOTAZIONE<br>INVIATA!</h2>
-            <p class="text-gray-500 mt-4 font-medium">Salva questo codice per modificare o annullare la tua prenotazione:</p>
-            
-            <div id="displayCode" class="my-8 bg-gray-100 p-6 rounded-3xl text-4xl font-black tracking-widest text-orange-600 border-4 border-dashed border-orange-200">
-                ------
-            </div>
-
-            <button onclick="location.reload()" class="w-full bg-black text-white py-4 rounded-2xl font-bold uppercase tracking-widest hover:bg-gray-800">Ho salvato il codice</button>
+    <!-- Modale Successo -->
+    <div id="successModal" class="fixed inset-0 bg-black/80 hidden flex items-center justify-center p-6 z-50">
+        <div class="bg-white rounded-[40px] p-10 w-full max-w-sm text-center shadow-2xl">
+            <div class="text-7xl mb-4">🎉</div>
+            <h2 class="text-2xl font-black">INVIATA!</h2>
+            <p class="text-gray-500 mt-2">Salva questo codice per modifiche future:</p>
+            <div id="displayCode" class="my-6 bg-gray-100 p-6 rounded-3xl text-4xl font-black tracking-widest text-orange-600 border-2 border-orange-200">------</div>
+            <button onclick="location.reload()" class="w-full bg-black text-white py-4 rounded-2xl font-bold uppercase tracking-widest">Ho salvato il codice</button>
         </div>
     </div>
 
-    <!-- Schermata Login/Modifica -->
-    <div id="loginView" class="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 hidden">
-        <h2 class="text-2xl font-black mb-2 uppercase">Gestione Prenotazione</h2>
-        <p class="text-gray-500 mb-6 text-sm">Inserisci il codice di 6 cifre ricevuto.</p>
-        
-        <input type="text" id="loginCode" maxlength="6" class="w-full border-gray-200 border-2 p-5 text-center text-3xl font-black rounded-2xl outline-none focus:border-orange-500 mb-4 uppercase" placeholder="ABCXYZ">
-        
-        <button onclick="checkCode()" id="btnCheckCode" class="w-full bg-orange-500 text-white py-4 rounded-2xl font-black uppercase shadow-lg">Verifica Codice</button>
-        <button onclick="location.reload()" class="w-full mt-4 text-gray-400 font-bold uppercase text-xs">Torna Indietro</button>
+    <!-- Schermata Login -->
+    <div id="loginView" class="max-w-md w-full bg-white rounded-3xl shadow-2xl p-8 hidden text-center">
+        <h2 class="text-2xl font-black mb-6 uppercase">Gestione Prenotazione</h2>
+        <input type="text" id="loginCode" maxlength="6" class="w-full border-gray-200 border-2 p-5 text-center text-3xl font-black rounded-2xl outline-none mb-6 uppercase" placeholder="ABCXYZ">
+        <button onclick="checkCode()" class="w-full bg-orange-500 text-white py-4 rounded-2xl font-black uppercase">Verifica Codice</button>
+        <button onclick="location.reload()" class="w-full mt-4 text-gray-400 font-bold uppercase text-xs">Annulla</button>
     </div>
 
     <script>
         const firebaseConfig = { databaseURL: "https://comandaristorante-facile-default-rtdb.europe-west1.firebasedatabase.app" };
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-
         const urlParams = new URLSearchParams(window.location.search);
-        const restaurantId = urlParams.get('id');
+        let restaurantId = urlParams.get('id');
 
         if (!restaurantId) {
             document.body.innerHTML = "<div class='text-center mt-20 font-bold text-red-500'>ID Ristorante Non Valido</div>";
         } else {
             document.getElementById('mainView').classList.remove('hidden');
             document.getElementById('date').min = new Date().toISOString().split("T")[0];
-
-            database.ref('restaurants/' + restaurantId + '/info/name').once('value').then(s => {
-                if(s.exists()) document.getElementById('restaurantName').innerText = s.val();
-            });
+            database.ref('restaurants/' + restaurantId + '/info/name').once('value').then(s => { if(s.exists()) document.getElementById('restaurantName').innerText = s.val(); });
         }
 
-        // GENERATORE CODICE UNICO
-        function generateUniqueCode() {
-            const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // No O, 0, I, 1 per evitare confusione
-            let code = "";
-            for (let i = 0; i < 6; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
-            return code;
-        }
-
-        // INVIO
         document.getElementById('reservationForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const code = generateUniqueCode();
+            const mode = this.dataset.mode || 'create';
+            const bookingId = this.dataset.bookingId;
+            const code = this.dataset.code || Math.random().toString(36).substring(2, 8).toUpperCase();
             
-            const newRes = {
+            const data = {
                 name: document.getElementById('name').value,
                 adults: parseInt(document.getElementById('adults').value),
                 children: parseInt(document.getElementById('children').value),
@@ -124,81 +92,49 @@
                 status: "ACTIVE"
             };
 
-            // 1. Salva nel ristorante
-            const resRef = await database.ref('restaurants/' + restaurantId + '/reservations').push(newRes);
-            
-            // 2. Crea mappatura globale del codice (per il login senza ID ristorante)
-            await database.ref('global_reservation_codes/' + code).set({
-                resId: restaurantId,
-                bookingId: resRef.key
-            });
-
-            document.getElementById('displayCode').innerText = code;
-            document.getElementById('successModal').classList.remove('hidden');
+            if (mode === 'create') {
+                const resRef = await database.ref('restaurants/' + restaurantId + '/reservations').push(data);
+                await database.ref('global_reservation_codes/' + code).set({ resId: restaurantId, bookingId: resRef.key });
+                document.getElementById('displayCode').innerText = code;
+                document.getElementById('successModal').classList.remove('hidden');
+            } else {
+                await database.ref('restaurants/' + restaurantId + '/reservations/' + bookingId).update(data);
+                alert("Prenotazione Aggiornata!");
+                location.reload();
+            }
         });
 
-        function showLogin() {
-            document.getElementById('mainView').classList.add('hidden');
-            document.getElementById('loginView').classList.remove('hidden');
-        }
+        function showLogin() { document.getElementById('mainView').classList.add('hidden'); document.getElementById('loginView').classList.remove('hidden'); }
 
-        async fun checkCode() {
+        async function checkCode() {
             const code = document.getElementById('loginCode').value.trim().toUpperCase();
-            if(code.length < 6) return;
-
             const snap = await database.ref('global_reservation_codes/' + code).once('value');
-            if(!snap.exists()) {
-                alert("Codice non trovato!");
-                return;
-            }
+            if(!snap.exists()) { alert("Codice non trovato!"); return; }
 
             const info = snap.val();
-            const bookingSnap = await database.ref('restaurants/' + info.resId + '/reservations/' + info.bookingId).once('value');
-            
-            if(!bookingSnap.exists()) return;
+            const bSnap = await database.ref('restaurants/' + info.resId + '/reservations/' + info.bookingId).once('value');
+            if(!bSnap.exists()) return;
+            const b = bSnap.val();
 
-            const booking = bookingSnap.val();
-            
-            // CONTROLLO MODIFICA (ALMENO 24 ORE PRIMA)
-            const today = new Date();
-            const resDate = new Date(booking.date);
-            const diffTime = resDate - today;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            // Limite 24 ore
+            const diff = new Date(b.date) - new Date();
+            if (diff < (1000 * 60 * 60 * 24)) { alert("Termini scaduti per la modifica online. Chiama il locale."); return; }
 
-            if (diffDays < 1) {
-                alert("Non puoi più modificare questa prenotazione (termine scaduto). Contatta telefonicamente il locale.");
-                return;
-            }
-
-            // Se OK, carichiamo i dati nel form e torniamo alla vista principale per la modifica
-            document.getElementById('name').value = booking.name;
-            document.getElementById('adults').value = booking.adults;
-            document.getElementById('children').value = booking.children;
-            document.getElementById('date').value = booking.date;
-            document.getElementById('slot').value = booking.slot;
-            document.getElementById('phone').value = booking.phone;
-            document.getElementById('notes').value = booking.notes;
-
-            // Cambiamo il tasto per indicare l'aggiornamento
-            const btn = document.querySelector('#reservationForm button[type="submit"]');
-            btn.innerText = "Aggiorna Prenotazione";
-            
-            // Salviamo l'ID della prenotazione per l'update
+            restaurantId = info.resId; // Aggiorna ID se necessario
+            document.getElementById('name').value = b.name;
+            document.getElementById('adults').value = b.adults;
+            document.getElementById('children').value = b.children;
+            document.getElementById('date').value = b.date;
+            document.getElementById('slot').value = b.slot;
+            document.getElementById('phone').value = b.phone;
+            document.getElementById('notes').value = b.notes;
+            document.getElementById('btnSubmit').innerText = "Aggiorna Prenotazione";
             document.getElementById('reservationForm').dataset.mode = "edit";
             document.getElementById('reservationForm').dataset.bookingId = info.bookingId;
             document.getElementById('reservationForm').dataset.code = code;
-
             document.getElementById('loginView').classList.add('hidden');
             document.getElementById('mainView').classList.remove('hidden');
         }
     </script>
-
-    <style>
-        @keyframes scaleUp {
-            0% { transform: scale(0.8); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .scale-up-animation { animation: scaleUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    </style>
 </body>
 </html>
